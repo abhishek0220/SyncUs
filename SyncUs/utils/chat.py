@@ -2,7 +2,7 @@ import socketio
 from SyncUs.Schemas.message import BroadcastSchema
 from SyncUs.utils.dataops import inMemDataBase
 
-sio = socketio.AsyncServer(async_mode='asgi')
+sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
 socket_app = socketio.ASGIApp(sio)
 
 
