@@ -11,11 +11,11 @@ class InMemDataBase:
         print(user)
     
     def getUserFromSid(self, sid: str) -> UserInfoSchema:
-        print(self.sidMap,'-------------')
-        return self.sidMap[sid]
+        return self.sidMap.get(sid)
 
     def removeSid(self, sid):
-        del self.sidMap[sid]
+        if self.sidMap.get(sid):
+            del self.sidMap[sid]
 
 
 inMemDataBase = InMemDataBase()

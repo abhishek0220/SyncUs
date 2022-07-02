@@ -13,11 +13,18 @@ def connect(sid, env):
 
 @sio.on("joined")
 async def joined(sid, msg):
-    access_token = msg
-    inMemDataBase.addSid(sid, access_token)
-    broadcastMsg = BroadcastSchema(msg="", sent_id=sid)
-    print(f"{sid} joined")
-    await sio.emit("userJoined", broadcastMsg.json())
+    try:
+        access_token = msg
+        inMemDataBase.addSid(sid, access_token)
+        broadcastMsg = BroadcastSchema(msg="", sent_id=sid)
+        broadcastMsg.msg = f"{broadcastMsg.sent_from.display_name} joined the channel"
+        print(f"{sid} joined")
+    except Exception as e:
+        print(e)
+        await sio.emit("leave", "", room=sid)
+        await sio.disconnect(sid)
+    else:
+        await sio.emit("system", broadcastMsg.json())
 
 
 @sio.on("message")
@@ -29,7 +36,12 @@ async def broadcast(sid, msg):
 
 @sio.on("disconnect")
 async def disconnect(sid):
-    broadcastMsg = BroadcastSchema(msg="", sent_id=sid)
-    inMemDataBase.removeSid(sid)
+    try:
+        broadcastMsg = BroadcastSchema(msg="", sent_id=sid)
+        broadcastMsg.msg = f"{broadcastMsg.sent_from.display_name} disconnected from channel"
+        inMemDataBase.removeSid(sid)
+    except Exception as e:
+        print("user not exist")
+    else:
+        await sio.emit("system", broadcastMsg.json())
     print(f"{sid} leaved")
-    await sio.emit("leave", broadcastMsg.json())
