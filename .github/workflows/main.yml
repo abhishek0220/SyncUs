@@ -33,9 +33,13 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         script: |
+          sudo pm2 delete syncus
           cp -r -f ./SyncUs-tmp/* ./SyncUs
           rm -r SyncUs-tmp
           cd SyncUs
           source venv/bin/activate
           pip install -r requirements.txt
           deactivate
+          sudo pm2 start app.py --no-autorestart --interpreter $(pwd)/venv/bin/python --name syncus
+          sudo pm2 startup systemd
+          sudo pm2 save
