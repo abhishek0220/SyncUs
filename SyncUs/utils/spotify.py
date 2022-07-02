@@ -6,7 +6,7 @@ class SpotifyWrapper:
     auth_manager = spotipy.oauth2.SpotifyOAuth(
         scope='user-read-currently-playing user-read-email',
         show_dialog=True,
-        redirect_uri="https://abhis.me/oauth/callback"
+        redirect_uri="http://localhost:3000/oauth/callback"
     )
 
     def getOauthUrl(self) -> str:
