@@ -13,7 +13,7 @@ class SpotifyWrapper:
         return self.auth_manager.get_authorize_url()
 
     def getToken(self, code: str) -> TokenSchema:
-        return TokenSchema.parse_obj(self.auth_manager.get_access_token(code))
+        return TokenSchema.parse_obj(self.auth_manager.get_access_token(code, check_cache=False))
 
     def getUserFromToken(self, access_token: str) -> UserInfoSchema:
         user = UserInfoSchema.parse_obj(

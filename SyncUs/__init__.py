@@ -3,6 +3,7 @@ import uuid
 from loguru import logger
 from datetime import datetime
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.concurrency import iterate_in_threadpool
 from SyncUs.Schemas.auth import TokenSchema
 from starlette.routing import Match
@@ -18,6 +19,9 @@ logger.add(fileName, colorize=True, format="<green>{time:YYYY-MM-DD HH:mm:ss}</g
 
 app = FastAPI(debug=True)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins='*')
 
 @app.middleware("http")
 async def log_middle(request: Request, call_next):
@@ -50,6 +54,7 @@ async def getAuthUrl():
 
 @app.get("/oauth/callback", response_model=TokenSchema)
 async def getToken(code: str):
-    return spotifyWrapper.getToken(code)
+    token = spotifyWrapper.getToken(code)
+    return token
 
 app.mount("/", socket_app) 
