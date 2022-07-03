@@ -4,7 +4,7 @@ from SyncUs.Schemas.user import UserInfoSchema
 
 class SpotifyWrapper:
     auth_manager = spotipy.oauth2.SpotifyOAuth(
-        scope='user-read-currently-playing user-read-email user-read-recently-played',
+        scope='user-read-currently-playing user-read-email user-read-recently-played user-modify-playback-state',
         show_dialog=True,
         redirect_uri="http://localhost:3000/oauth/callback"
     )
@@ -20,5 +20,12 @@ class SpotifyWrapper:
             spotipy.Spotify(auth=access_token).current_user()
         )
         return user
+
+    def searchMusic(self, string: str):
+        resp = spotipy.Spotify(client_credentials_manager = spotipy.SpotifyClientCredentials()).search(string,limit=1, type="track")
+        matched = resp["tracks"]['items']
+        if len(matched) != 0:
+            return matched[0]["uri"], matched[0]["name"]
+        return None, None
 
 spotifyWrapper = SpotifyWrapper()
