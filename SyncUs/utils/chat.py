@@ -33,6 +33,7 @@ async def broadcast(sid, msg: str):
     print(f"{sid} sent msg to all")
     broadcastMsg = BroadcastSchema(msg=msg, sent_id=sid)
     await sio.emit("sendMessage", broadcastMsg.json())
+
     if msg.startswith("#play "):
         search_str = msg[6:]
         uri, name = spotifyWrapper.searchMusic(search_str)
@@ -43,6 +44,12 @@ async def broadcast(sid, msg: str):
         else:
             play_msg = BroadcastSchema(msg="requested song not found", sent_id=sid)
         await sio.emit("system", play_msg.json())
+
+    elif msg == "#pause":
+        await sio.emit("pause","")
+        pause_msg = BroadcastSchema(msg="", sent_id=sid)
+        pause_msg.msg = f"{pause_msg.sent_from.display_name} Requested to pause the song"
+        await sio.emit("system", pause_msg.json())
 
 
 @sio.on("disconnect")
