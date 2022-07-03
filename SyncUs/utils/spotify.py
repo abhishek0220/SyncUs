@@ -4,7 +4,7 @@ from SyncUs.Schemas.user import UserInfoSchema
 
 class SpotifyWrapper:
     auth_manager = spotipy.oauth2.SpotifyOAuth(
-        scope='user-read-currently-playing user-read-email',
+        scope='user-read-currently-playing user-read-email user-read-recently-played',
         show_dialog=True,
         redirect_uri="http://localhost:3000/oauth/callback"
     )
